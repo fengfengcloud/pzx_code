@@ -23,7 +23,7 @@ s********************************************************************/
                                 /* this also includes config.h */
 #include "hal.h"		/* HAL public API decls */
 #include "bcm2835.h"
-#include "cpuinfo.h"
+//#include "cpuinfo.h"
 
 #define BCM2708_PERI_BASE   0x20000000
 #define BCM2708_GPIO_BASE   (BCM2708_PERI_BASE + 0x200000)
@@ -101,6 +101,7 @@ static __inline__ uint8_t bcm2835_gpio_lev(uint8_t pin)
   volatile uint32_t* paddr = gpio + BCM2835_GPLEV0/4 + pin/32;
   uint8_t shift = pin % 32;
   uint32_t value = bcm2835_peri_read(paddr);
+//printf("paddr:0x%x \t",paddr);
   return (value & (1 << shift)) ? HIGH : LOW;
 }
 
@@ -126,6 +127,7 @@ static __inline__ void bcm2835_gpio_clr(uint8_t pin)
   volatile uint32_t* paddr = gpio + BCM2835_GPCLR0/4 + pin/32;
   uint8_t shift = pin % 32;
   bcm2835_peri_write(paddr, 1 << shift);
+//	printf("paddr:0x%x \n",paddr);
 }
 
 // Set/clear only the bits in value covered by the mask
@@ -186,6 +188,7 @@ static int  setup_gpio_access(int rev, int ncores)
 {
   // open /dev/mem 
   if ((mem_fd = rtapi_open_as_root("/dev/mem", O_RDWR|O_SYNC) ) < 0) {
+// if ((mem_fd = open("/dev/mem", O_RDWR|O_SYNC) ) < 0) {
       rtapi_print_msg(RTAPI_MSG_ERR,"HAL_GPIO: can't open /dev/mem:  %d - %s",
 		      errno, strerror(errno));
     return -1;
